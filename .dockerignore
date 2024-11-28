@@ -1,0 +1,14 @@
+.env
+Dockerfile
+.dockerignore
+.next
+.git
+.gitignore
+node_modules
+npm-debug.log
+
+*.sql~         # Archivos temporales de SQL
+*.conf~        # Archivos temporales de configuración
+
+
+README.md
