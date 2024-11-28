@@ -1,0 +1,12 @@
+// authService.ts
+import api from './api';
+
+export const login = async (email: string, contraseña: string) => {
+    const response = await api.post('/auth/login', { email, contraseña });
+    return response.data;
+};
+
+export const register = async (nombre: string, email: string, contraseña: string, rol: string) => {
+    const response = await api.post('/auth/register', { nombre, email, contraseña, rol });
+    return response.data;
+};

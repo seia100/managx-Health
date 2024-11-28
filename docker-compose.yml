@@ -3,6 +3,29 @@ version: "3.9"
 
 # Define los servicios que serán gestionados por Docker Compose.
 services:
+
+    backend:
+        build:
+            context: ./backend
+            dockerfile: Dockerfile
+        container_name: healthcare-backend
+        ports:
+            - "3001:3000" # Mapea el puerto 3001 del host al 3000 del contenedor
+        volumes:
+            - ./backend:/app
+            - /app/node_modules
+        environment:
+            NODE_ENV: development
+            DB_HOST: db
+            DB_PORT: 5432
+            POSTGRES_USER: ${POSTGRES_USER}
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+            POSTGRES_DB: ${POSTGRES_DB}
+            JWT_SECRET: your_jwt_secret
+        depends_on:
+            - db
+        restart: unless-stopped
+
     # Configuración del servicio de base de datos PostgreSQL.
     db:
         # Selección de la imagen base del contenedor para PostgreSQL.
