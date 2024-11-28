@@ -88,6 +88,8 @@
 │   ├── /seeders                       # Archivos para datos de prueba
 │   │   ├── 01-users.seed.sql
 │   │   ├── 02-patients.seed.sql
+│   ├── /config                       # Archivo inicial de mi base de datos
+│   │   ├── init.sql
 ├── /docker
 │   ├── docker-compose.yml             # Orquestación de servicios con Docker Compose
 │   ├── .env                           # Variables de entorno compartidas
