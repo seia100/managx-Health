@@ -8,7 +8,7 @@
   ],
   "private": true,
   "scripts": {
-    "start": "npm run start:frontend & npm run start:backend",
+    "start": "concurrently \"npm run start:frontend\" \"npm run start:backend\"",
     "start:frontend": "npm --workspace frontend start",
     "start:backend": "npm --workspace backend start",
     "build": "npm --workspace frontend build && npm --workspace backend build",
@@ -16,5 +16,8 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^9.1.0"
+  }
 }
