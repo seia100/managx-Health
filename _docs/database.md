@@ -90,22 +90,59 @@ volumes:
 ```
 Este documento esta comentado a detalle en la ruta: [docker-compose.yml](../docker/docker-compose.yml)
 
+4. Crear scripts de inicialización
+
+Relacionado a como seria la base de datos inicial revisar la ruta de [init.sql](../database/config/init.sql)
+
 
 ## Inicializar base de datos
-- Inicializar el servicio con docker compose
+- Inicializar el servicio con [docker compose](https://medium.com/@asuarezaceves/initializing-a-postgresql-database-with-a-dataset-using-docker-compose-a-step-by-step-guide-3feebd5b1545)
 
     ```shell
-    docker-compose up --build
+    docker-compose up
     ```
 
     Este comando su funcion es: 
     - Crea y configura el contenedor de PostgreSQL.
     - Ejecuta cualquier archivo en database/config como parte de la inicialización.
+
+    Deberias de observar la creacion de la base de datos y que esta a la escucha:
+
+    ![docker-postgre](<assets/Screenshot from 2024-11-28 05-57-50.png>)
+
+
 - Verificar el estado del contenedor
 
     ```shell
     docker ps
     ```
+
+    Revisa las imagenes
+
+    ![docker ps -a](image.png)
+
+- Accede a la consola de PostgreSQL dentro del contenedor
+  
+    ```shell
+    docker exec -it healthcare-db psql -U admin -d healthcare
+
+    ```
+
+    Comporbamos la creaacion de nuestra base de datos
+    - listar tablas
     
-1. Crear un Archivo de Configuración para la Base de Datos `db.ts
+        ![docker exec](image-1.png)
+
+    - Ver estructura de una tabla (por ejemplo, usuarios):
     
+        ![\d Usuarios](image-2.png)
+    
+    - Ejecutar una consulta (por ejemplo, listar usuarios):
+    
+        ![consultar contenido](image-3.png)
+
+    - salir de psql
+        
+        ```psql
+        healthcare=# \q
+        ```
