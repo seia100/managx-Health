@@ -1,0 +1,20 @@
+{
+  "name": "managx-health",
+  "version": "1.0.0",
+  "description": "Basic health data management, including user management, medical records and appointments, with a focus on safety and authentication.",
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "private": true,
+  "scripts": {
+    "start": "npm run start:frontend & npm run start:backend",
+    "start:frontend": "npm --workspace frontend start",
+    "start:backend": "npm --workspace backend start",
+    "build": "npm --workspace frontend build && npm --workspace backend build",
+    "test": "npm --workspaces test"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
