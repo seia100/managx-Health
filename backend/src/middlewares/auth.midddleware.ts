@@ -7,7 +7,7 @@ import jwt from 'jsonwebtoken';
 
 import { ErrorHandler } from '../utils/error.handler';
 import { UserRole } from '../interfaces/user.interface';
-import '../types'; // Importamos los tipos personalizados
+// import @types; // Importamos los tipos personalizados
 /**
  * @theoreticalBackground
  * Seguridad basada en JWT:

@@ -7,7 +7,7 @@ import { validateUser } from '../validators/user.validator';
 import { IUserCreate, IUserLogin, IUserUpdate, UserRole} from '../interfaces/user.interface';
 import { ErrorHandler } from '../utils/error.handler';
 import { AuthBaseController } from './auth.base.controller';
-import '../types';
+// import @types;
 
 /**
  * @class UserController

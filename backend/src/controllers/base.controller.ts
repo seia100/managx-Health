@@ -1,7 +1,7 @@
 // src/controllers/base.controller.ts
 import { Request, Response } from 'express';
 import { ErrorHandler } from '../utils/error.handler';
-import '../types'; // Importamos los tipos personalizados
+// import @types; // Importamos los tipos personalizados
 
 
 export interface ResponseData {

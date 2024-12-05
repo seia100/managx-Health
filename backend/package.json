@@ -5,7 +5,8 @@
 	"scripts": {
 		"start": "node dist/server.js",
 		"dev": "nodemon src/server.ts",
-		"build": "tsc",
+		"build": "tsc && npm run copy-types",
+		"copy-types": "cp -r src/types dist/",
 		"clean": "rm -rf dist"
 	},
 	"keywords": [],
@@ -26,7 +27,7 @@
 	"devDependencies": {
 		"@types/bcrypt": "^5.0.2",
 		"@types/cors": "^2.8.17",
-		"@types/express": "^5.0.0",
+		"@types/express": "4.17.21",
 		"@types/express-rate-limit": "^6.0.2",
 		"@types/helmet": "^4.0.0",
 		"@types/jest": "^29.5.14",

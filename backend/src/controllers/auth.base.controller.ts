@@ -3,7 +3,7 @@ import { Request, Response } from 'express';
 import { ErrorHandler } from '../utils/error.handler';
 import { BaseController } from './base.controller';
 import { UserRole } from '../interfaces/user.interface';
-import '../types';
+// import @types;
 
 export abstract class AuthBaseController extends BaseController {
     /**

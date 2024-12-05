@@ -5,7 +5,7 @@ import { validateMedicalRecord } from '../validators/medical-record.validator';
 import { ErrorHandler } from '../utils/error.handler';
 import { AuthBaseController } from './auth.base.controller';
 import { UserRole } from '../interfaces/user.interface';
-import '../types';
+// import @types;
 /**
  * @class MedicalRecordController
  * @extends AuthBaseController
