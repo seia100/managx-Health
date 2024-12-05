@@ -1,62 +1,58 @@
-# Especifica la versión de la sintaxis de Docker Compose para garantizar compatibilidad.
-version: "3.9" 
+version: '3.8'
 
-# Define los servicios que serán gestionados por Docker Compose.
 services:
-
     backend:
         build:
             context: ./backend
             dockerfile: Dockerfile
-        container_name: healthcare-backend
+        container_name: health_backend
         ports:
-            - "3001:3000" # Mapea el puerto 3001 del host al 3000 del contenedor
-        volumes:
-            - ./backend:/app
-            - /app/node_modules
+            - "3000:3000"
         environment:
-            NODE_ENV: development
-            DB_HOST: db
-            DB_PORT: 5432
-            POSTGRES_USER: ${POSTGRES_USER}
-            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-            POSTGRES_DB: ${POSTGRES_DB}
-            JWT_SECRET: your_jwt_secret
+            - NODE_ENV=development
+            - DB_HOST=postgres
+            - DB_PORT=5432
+            - DB_NAME=health_db
+            - DB_USER=health_user
+            - DB_PASSWORD=health_password
+            - JWT_SECRET=your_jwt_secret_key_here
+        volumes:
+            - ./backend:/usr/src/app
+            - /usr/src/app/node_modules
         depends_on:
-            - db
+            - postgres
+        networks:
+            - health_network
+        command: npm run dev
         restart: unless-stopped
 
-    # Configuración del servicio de base de datos PostgreSQL.
-    db:
-        # Selección de la imagen base del contenedor para PostgreSQL.
-        image: postgres:13
-        # Asigna un nombre legible al contenedor para facilitar su identificación.
-        container_name: healthcare-db
-        # Define variables de entorno necesarias para inicializar PostgreSQL.
-        # POSTGRES_USER: Usuario administrador para la base de datos.
-        # POSTGRES_PASSWORD: Contraseña del usuario administrador.
-        # POSTGRES_DB: Nombre de la base de datos inicial que se crea al arrancar el contenedor.
-        environment:
-            POSTGRES_USER: ${POSTGRES_USER}
-            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-            POSTGRES_DB: ${POSTGRES_DB}
-
-        # Mapea el puerto interno del contenedor PostgreSQL (5432) al puerto del host (5432).
-        # Esto permite que servicios externos se conecten a la base de datos.
+    postgres:
+        image: postgres:15-alpine
+        container_name: health_postgres
         ports:
             - "5432:5432"
-        # Define volúmenes para persistencia de datos y configuración inicial.
+        environment:
+            - POSTGRES_DB=health_db
+            - POSTGRES_USER=health_user
+            - POSTGRES_PASSWORD=health_password
+            - POSTGRES_HOST_AUTH_METHOD=trust
         volumes:
-            # db-data: Persistencia de los datos en el directorio de almacenamiento predeterminado de PostgreSQL.
-            - db-data:/var/lib/postgresql/data
-            # ./database/config: Permite cargar scripts o configuraciones personalizadas en la inicialización.
-            - ./database/config:/docker-entrypoint-initdb.d
-        # Configura el comportamiento de reinicio del contenedor.
-        # "unless-stopped": Reinicia el contenedor automáticamente excepto si es detenido manualmente.
+            - postgres_data:/var/lib/postgresql/data
+            - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+        networks:
+            - health_network
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U health_user -d health_db"]
+            interval: 10s
+            timeout: 5s
+            retries: 5
         restart: unless-stopped
 
-# Declaración de volúmenes persistentes.
 volumes:
-    # db-data: Define un volumen con nombre que asegura la persistencia de los datos de la base de datos,
-    # incluso si el contenedor es eliminado o actualizado.
-    db-data:
+    postgres_data:
+        name: health_postgres_data
+
+networks:
+    health_network:
+        name: health_network
+        driver: bridge

@@ -1,0 +1,103 @@
+## References:
+- [AXIOS — The Bridge Between Frontend and Backend](https://medium.com/@dszafranski/axios-the-bridge-between-frontend-and-backend-da040bd11af0) 
+
+- [How to Connect Frontend and Backend Using Axios (Example Guide)](https://websitehurdles.com/connect-frontend-backend-axios/)
+
+-[Axios in React: A Guide for Beginners](https://www.geeksforgeeks.org/axios-in-react-a-guide-for-beginners/)
+
+
+Implementación anterior (servicios directos a base de datos):
+```ts
+// Anterior implementación (backend)
+export class MedicalRecordService {
+    public async getPatientRecords(patientId: string): Promise<IMedicalRecord[]> {
+        const result = await db.query(
+            `SELECT * FROM historiales_medicos WHERE paciente_id = $1`,
+            [patientId]
+        );
+        return result.rows;
+    }
+}
+```
+
+Este código era parte del backend y hacía consultas directas a la base de datos PostgreSQL. No era una respuesta HTTP, sino una consulta SQL directa que retornaba datos crudos de la base de datos.
+Con Axios (frontend), la implementación sería:
+
+```ts
+// Nueva implementación con Axios (frontend)
+export class MedicalRecordApiService {
+    private api: ApiService;
+
+    constructor() {
+        this.api = ApiService.getInstance();
+    }
+
+    public async getPatientRecords(patientId: string): Promise<IMedicalRecord[]> {
+        // Aquí Axios hace una petición HTTP al endpoint del backend
+        return await this.api.get<IMedicalRecord[]>(`/pacientes/${patientId}/historiales`);
+    }
+}
+```
+
+La diferencia principal es que:
+
+Los servicios anteriores (backend):
+
+Están en el servidor
+Hacen consultas directas a la base de datos
+Manejan la lógica de negocio
+Retornan datos crudos de la base de datos
+
+
+Los servicios con Axios (frontend):
+
+Están en el cliente (navegador)
+Hacen peticiones HTTP al backend
+Consumen los endpoints que expone tu API
+Reciben respuestas HTTP formateadas
+
+
+
+El flujo completo sería así:
+
+```plaintext
+Frontend (Axios) → HTTP Request → Backend (Express) → Query → Database
+   ↑                                    |
+   |                                    |
+   └────────────── HTTP Response ←──────┘
+   
+```
+Por ejemplo, cuando un usuario quiere ver los historiales médicos:
+
+El frontend hace una petición con Axios:
+```ts
+// Frontend
+const historiales = await medicalService.getPatientRecords('123');
+```
+
+Axios envía una petición HTTP a tu endpoint:
+
+```plaintext
+GET /api/pacientes/123/historiales
+```
+Tu backend (Express) recibe la petición:
+
+```ts
+// Backend
+router.get('/pacientes/:id/historiales', 
+    authMiddleware.authenticate,
+    MedicalRecordController.getPatientRecords
+);
+```
+
+El controlador usa el servicio para consultar la base de datos:
+
+```ts
+// Backend
+public async getPatientRecords(req: Request, res: Response): Promise<void> {
+    const records = await this.medicalRecordService.getPatientRecords(req.params.id);
+    res.json({ status: 'success', data: records });
+}
+```
+
+Axios no administra las rutas por sí mismo - simplemente proporciona una manera elegante de hacer peticiones HTTP a los endpoints que tu backend expone. Las rutas reales están definidas en tu backend usando Express.

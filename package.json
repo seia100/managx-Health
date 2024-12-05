@@ -1,23 +1,22 @@
 {
   "name": "managx-health",
   "version": "1.0.0",
-  "description": "Basic health data management, including user management, medical records and appointments, with a focus on safety and authentication.",
+  "description": "Basic health data management, including user management, medical records, and appointments, with a focus on safety and authentication.",
   "workspaces": [
     "frontend",
     "backend"
   ],
   "private": true,
   "scripts": {
-    "start": "concurrently \"npm run start:frontend\" \"npm run start:backend\"",
-    "start:frontend": "npm --workspace frontend start",
-    "start:backend": "npm --workspace backend start",
-    "build": "npm --workspace frontend build && npm --workspace backend build",
-    "test": "npm --workspaces test"
+    "start": "concurrently \"npm run --workspace frontend start\" \"npm run --workspace backend start\"",
+    "start:frontend": "npm run --workspace frontend start",
+    "start:backend": "npm run --workspace backend start",
+    "build": "npm run --workspace frontend build && npm run --workspace backend build",
+    "clean": "npm run clean --workspaces && rm -rf node_modules package-lock.json",
+    "install:all": "npm install --workspaces"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "concurrently": "^9.1.0"
   }
 }
