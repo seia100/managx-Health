@@ -93,6 +93,8 @@ La razon por la que editamos esta para tener una mayor versatilidad de ejecucion
   npm install express pg bcrypt jsonwebtoken dotenv joi cors body-parser class-validator
   npm install -D typescript ts-node nodemon @types/node @types/express jest ts-jest supertest @types/jest
 
+  npm install --save-dev @types/cors @types/helmet @types/express-rate-limit # update
+
   ## controllers, 
   npm i --save-dev @types/bcrypt @types/jsonwebtoken
   ```

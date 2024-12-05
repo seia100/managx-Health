@@ -1,77 +1,92 @@
-// AuthContext.tsx
+import React, { createContext, useState, useEffect, useContext, useMemo } from 'react';
+import { login as apiLogin, fetchUserProfile } from '../services/api';
 
-// Importa las dependencias necesarias de React para manejar el contexto de autenticación.
-import React, { createContext, useState, useContext, ReactNode } from 'react';
-// Importa el servicio de autenticación para interactuar con el backend.
-import { login as loginService } from '../services/authService';
-
-// Define la estructura de los datos que manejará el contexto.
-interface AuthContextProps {
-    isAuthenticated: boolean; // Estado que indica si el usuario está autenticado.
-    login: (email: string, contraseña: string) => Promise<void>; // Función para realizar login.
-    logout: () => void; // Función para realizar logout.
+// Tipo para el contexto
+interface AuthContextType {
+    user: User | null;
+    login: (email: string, password: string) => Promise<void>;
+    logout: () => void;
+    isAuthenticated: boolean;
 }
 
-// Crea el contexto de autenticación, inicializado como `undefined` hasta que el proveedor esté presente.
-const AuthContext = createContext<AuthContextProps | undefined>(undefined);
+interface User {
+    id: number;
+    name: string;
+    email: string;
+    role: string;
+}
 
-/**
- * Proveedor de contexto que envuelve a los componentes hijos con la lógica de autenticación.
- * @param children - Los componentes hijos que podrán acceder al contexto de autenticación.
- */
-export const AuthProvider = ({ children }: { children: ReactNode }) => {
-    // Estado que determina si el usuario está autenticado (por defecto es `false`).
-    const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+// Creación del contexto
+export const AuthContext = createContext<AuthContextType>({
+    user: null,
+    login: async () => {},
+    logout: () => {},
+    isAuthenticated: false,
+});
 
-    /**
-     * Función para iniciar sesión.
-     * Realiza la autenticación y guarda el token en `localStorage`.
-     * @param email - El correo electrónico del usuario.
-     * @param contraseña - La contraseña del usuario.
-     */
-    const login = async (email: string, contraseña: string) => {
-        // Llama al servicio de login, que devuelve un token de autenticación.
-        const { token } = await loginService(email, contraseña);
-        
-        // Guarda el token en el `localStorage` para persistir la sesión entre recargas de página.
-        localStorage.setItem('token', token);
-        
-        // Cambia el estado de autenticación a `true`.
-        setIsAuthenticated(true);
+// Componente Provider
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+    const [user, setUser] = useState<User | null>(null);
+
+    // Estado para controlar si se está cargando la autenticación
+    const [loading, setLoading] = useState(true);
+
+    // Cargar información del usuario desde el backend si existe un token
+    useEffect(() => {
+        const loadUser = async () => {
+            const token = localStorage.getItem('authToken');
+            if (token) {
+                try {
+                const profile = await fetchUserProfile();
+                setUser(profile);
+                } catch (err) {
+                console.error('Error loading user:', err);
+                localStorage.removeItem('authToken');
+                }
+            }
+            setLoading(false); // Finaliza el estado de carga
+        };
+        loadUser();
+    }, []);
+
+    // Función para iniciar sesión
+    const login = async (email: string, password: string) => {
+        try {
+            await apiLogin(email, password);
+            const profile = await fetchUserProfile();
+            setUser(profile);
+        } catch (err) {
+            console.error('Login failed:', err);
+            throw new Error('Invalid credentials');
+        }
     };
 
-    /**
-     * Función para cerrar sesión.
-     * Elimina el token del `localStorage` y actualiza el estado de autenticación.
-     */
+    // Función para cerrar sesión
     const logout = () => {
-        // Elimina el token del `localStorage`, terminando la sesión del usuario.
-        localStorage.removeItem('token');
-        
-        // Cambia el estado de autenticación a `false`.
-        setIsAuthenticated(false);
+        setUser(null);
+        localStorage.removeItem('authToken');
     };
 
-    return (
-        // Proporciona el contexto con el estado y las funciones para login/logout.
-        <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
-            {children} {/* Renderiza los componentes hijos dentro del proveedor de contexto. */}
-        </AuthContext.Provider>
+    // Determinar si el usuario está autenticado
+    const isAuthenticated = !!user;
+
+    // Memoización del valor proporcionado
+    const contextValue = useMemo(
+        () => ({
+            user,
+            login,
+            logout,
+            isAuthenticated,
+        }),
+        [user, isAuthenticated] // Solo se recalcula si cambia `user` o `isAuthenticated`
     );
-};
 
-/**
- * Hook personalizado para acceder al contexto de autenticación.
- * @returns El contexto de autenticación, que contiene `isAuthenticated`, `login`, y `logout`.
- * @throws Error si se intenta usar el hook fuera de un `AuthProvider`.
- */
-export const useAuth = () => {
-    const context = useContext(AuthContext);
-
-    // Verifica si el hook se usa fuera del contexto del `AuthProvider`.
-    if (!context) {
-        throw new Error('useAuth debe usarse dentro de un AuthProvider');
+    if (loading) {
+        return <div>Loading...</div>; // Puedes reemplazar con un componente de carga
     }
 
-    return context;
+    return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;
 };
+
+// Hook personalizado para usar el contexto
+export const useAuth = () => useContext(AuthContext);
