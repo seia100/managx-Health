@@ -1,27 +1,27 @@
 import React, { useState } from 'react';
-import { createPatient, updatePatient } from '../../services/api';
+import { updatePatient } from '../../services/api';
 
-const PatientForm: React.FC<{ patientId?: number }> = ({ patientId }) => {
-    const [formData, setFormData] = useState({ name: '', age: '', contact: '' });
+interface PatientFormData {
+    name: string;
+    age: number;
+    contact: string;
+}
+
+const PatientForm: React.FC<{ patientId: number }> = ({ patientId }) => {
+    const [formData, setFormData] = useState<PatientFormData>({
+        name: '',
+        age: 0,
+        contact: '',
+    });
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        const formattedData = {
-            ...formData,
-            age: Number(formData.age), // Convierte age a número
-        };
-
         try {
-            if (patientId) {
-                await updatePatient(patientId, formattedData);
-                alert('Patient updated successfully');
-            } else {
-                await createPatient(formattedData);
-            }
-            alert('Patient saved successfully');
+        await updatePatient(patientId, formData);
+        alert('Patient updated successfully');
         } catch (err) {
-            console.error('Error saving patient:', err);
+        console.error('Error updating patient:', err);
         }
     };
 
@@ -38,7 +38,7 @@ const PatientForm: React.FC<{ patientId?: number }> = ({ patientId }) => {
             type="number"
             placeholder="Age"
             value={formData.age}
-            onChange={(e) => setFormData({ ...formData, age: e.target.value })}
+            onChange={(e) => setFormData({ ...formData, age: Number(e.target.value) })}
             required
         />
         <input
