@@ -1,68 +1,57 @@
 // src/routes/patient.routes.ts
 import { Router } from 'express';
-import PatientController from '../controllers/patient.controller';
-import AuthMiddleware from '../middlewares/auth.midddleware';
-import { UserRole } from '../interfaces/user.interface';
+import { PatientController } from '../controllers/patient.controller';
+import { AuthMiddleware } from '../middleware/auth.middleware';
+import { RBACMiddleware } from '../middleware/rbac.middleware';
+import { ValidateMiddleware } from '../middleware/validate.middleware';
+import { patientSchemas } from '../utils/validation-schemas';
+import { APP_CONSTANTS } from '../config/constants';
 
 const router = Router();
+const patientController = new PatientController();
 
 /**
- * @route POST /api/patients
- * @access Private - Médicos y Enfermeros
+ * Rutas de pacientes
+ * Todas requieren autenticación y roles específicos
+ * Se implementa paginación para listados
  */
 router.post(
     '/',
-    [
-        AuthMiddleware.authenticate,
-        AuthMiddleware.authorize([UserRole.MEDICO, UserRole.ENFERMERO])
-    ],
-    PatientController.createPatient
+    AuthMiddleware.authenticate,
+    RBACMiddleware.checkRole([APP_CONSTANTS.ROLES.MEDICO, APP_CONSTANTS.ROLES.ADMIN]),
+    ValidateMiddleware.validateBody(patientSchemas.createPatient),
+    patientController.create
 );
 
-/**
- * @route GET /api/patients
- * @access Private - Todos los usuarios autenticados
- */
 router.get(
     '/',
     AuthMiddleware.authenticate,
-    PatientController.getPatients
+    RBACMiddleware.checkRole([APP_CONSTANTS.ROLES.MEDICO, APP_CONSTANTS.ROLES.ADMIN]),
+    ValidateMiddleware.validateQuery(patientSchemas.listPatients),
+    patientController.getAll
 );
 
-/**
- * @route GET /api/patients/:id
- * @access Private - Todos los usuarios autenticados
- */
 router.get(
     '/:id',
     AuthMiddleware.authenticate,
-    PatientController.getPatientById
+    RBACMiddleware.checkRole([APP_CONSTANTS.ROLES.MEDICO, APP_CONSTANTS.ROLES.ADMIN]),
+    ValidateMiddleware.validateParams(patientSchemas.getPatient),
+    patientController.getById
 );
 
-/**
- * @route PUT /api/patients/:id
- * @access Private - Médicos y Enfermeros
- */
 router.put(
     '/:id',
-    [
-        AuthMiddleware.authenticate,
-        AuthMiddleware.authorize([UserRole.MEDICO, UserRole.ENFERMERO])
-    ],
-    PatientController.updatePatient
+    AuthMiddleware.authenticate,
+    RBACMiddleware.checkRole([APP_CONSTANTS.ROLES.MEDICO, APP_CONSTANTS.ROLES.ADMIN]),
+    ValidateMiddleware.validateBody(patientSchemas.updatePatient),
+    patientController.update
 );
 
-/**
- * @route DELETE /api/patients/:id
- * @access Private - Solo Administradores
- */
 router.delete(
     '/:id',
-    [
-        AuthMiddleware.authenticate,
-        AuthMiddleware.authorize([UserRole.ADMINISTRADOR])
-    ],
-    PatientController.deletePatient
+    AuthMiddleware.authenticate,
+    RBACMiddleware.checkRole([APP_CONSTANTS.ROLES.ADMIN]),
+    patientController.delete
 );
 
 export default router;

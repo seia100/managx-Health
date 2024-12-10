@@ -1,30 +1,26 @@
-// src/routes/user.routes.ts
+// src/routes/auth.routes.ts
 import { Router } from 'express';
-import UserController from '../controllers/user.controller';
-import AuthMiddleware from '../middlewares/auth.midddleware';
-import { UserRole } from '../interfaces/user.interface';
+import { AuthController } from '../controllers/auth.controller';
+import { ValidateMiddleware } from '../middleware/validate.middleware';
+import { authSchemas } from '../utils/validation-schemas';
 
 const router = Router();
+const authController = new AuthController();
 
-router.get(
-    '/:id',
-    AuthMiddleware.authenticate,
-    UserController.getProfile
+/**
+ * Rutas de autenticación
+ * No requieren autenticación previa ya que son el punto de entrada al sistema
+ */
+router.post(
+    '/register',
+    ValidateMiddleware.validateBody(authSchemas.register),
+    authController.register
 );
 
-router.put(
-    '/:id',
-    AuthMiddleware.authenticate,
-    UserController.updateProfile
-);
-
-router.delete(
-    '/:id',
-    [
-        AuthMiddleware.authenticate,
-        AuthMiddleware.authorize([UserRole.ADMINISTRADOR])
-    ],
-    UserController.deleteUser
+router.post(
+    '/login',
+    ValidateMiddleware.validateBody(authSchemas.login),
+    authController.login
 );
 
 export default router;

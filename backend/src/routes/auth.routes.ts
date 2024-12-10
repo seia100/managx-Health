@@ -1,23 +1,26 @@
 // src/routes/auth.routes.ts
 import { Router } from 'express';
-import UserController from '../controllers/user.controller';
-import { validate } from '../middlewares/validator.middleware';
-import { userSchema, loginSchema } from '../validators/user.validator';
+import { AuthController } from '../controllers/auth.controller';
+import { ValidateMiddleware } from '../middleware/validate.middleware';
+import { authSchemas } from '../utils/validation-schemas';
 
 const router = Router();
+const authController = new AuthController();
 
 /**
- * @route POST /api/auth/register
- * @desc Registro de nuevos usuarios
- * @access Public
+ * Rutas de autenticación
+ * No requieren autenticación previa ya que son el punto de entrada al sistema
  */
-router.post('/register', validate(userSchema), UserController.register);
+router.post(
+    '/register',
+    ValidateMiddleware.validateBody(authSchemas.register),
+    authController.register
+);
 
-/**
- * @route POST /api/auth/login
- * @desc Login de usuarios
- * @access Public
- */
-router.post('/login', validate(loginSchema), UserController.login);
+router.post(
+    '/login',
+    ValidateMiddleware.validateBody(authSchemas.login),
+    authController.login
+);
 
 export default router;

@@ -1,89 +1,67 @@
 // src/config/database.ts
-/*
-Configuración de base de datos:
-    * Patrón Singleton para conexión única
-    * Pool de conexiones para optimizar recursos
-    * Manejo de transacciones y consultas
-
-*/
 import { Pool, PoolConfig } from 'pg';
-import dotenv from 'dotenv';
+import { DatabaseConfig } from './types';
+import { logger } from '@/utils/logger';
 
 /**
- * @theoreticalBackground
- * Patrón Singleton para conexión a base de datos:
- * - Garantiza una única instancia de conexión
- * - Reutilización eficiente de recursos
- * - Gestión centralizada de la conexión
+ * Configuración de la conexión a PostgreSQL utilizando un pool de conexiones
+ * para mejorar el rendimiento y la escalabilidad.
+ * 
+ * @remarks
+ * Utilizamos un pool de conexiones por las siguientes razones:
+ * 1. Reutilización de conexiones
+ * 2. Límite de conexiones concurrentes
+ * 3. Gestión automática de conexiones caídas
  */
-export class DatabaseConnection {
-    private static instance: DatabaseConnection;
+class Database {
+    private static instance: Database;
     private pool: Pool;
 
     private constructor() {
-        dotenv.config();
-
-        const config: PoolConfig = {
-            user: process.env.DB_USER,
-            host: process.env.DB_HOST,
-            database: process.env.DB_NAME,
-            password: process.env.DB_PASSWORD,
+        const config: DatabaseConfig = {
+            host: process.env.DB_HOST || 'localhost',
             port: parseInt(process.env.DB_PORT || '5432'),
-            ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : undefined,
-            // Configuración de Pool para optimizar recursos
-            max: 20, // máximo de conexiones concurrentes
-            idleTimeoutMillis: 30000, // tiempo máximo de inactividad
-            connectionTimeoutMillis: 2000 // tiempo máximo para establecer conexión
+            database: process.env.DB_NAME || 'healthcare_db',
+            user: process.env.DB_USER || 'postgres',
+            password: process.env.DB_PASSWORD || '',
+            max: parseInt(process.env.DB_POOL_MAX || '20'),
+            idleTimeoutMillis: parseInt(process.env.DB_IDLE_TIMEOUT || '30000')
         };
 
         this.pool = new Pool(config);
 
-        // Manejo de errores a nivel de pool
+        // Manejo de eventos del pool
+        this.pool.on('connect', () => {
+            logger.info('Nueva conexión establecida con PostgreSQL');
+        });
+
         this.pool.on('error', (err) => {
-            console.error('Error inesperado del pool de conexiones:', err);
+            logger.error('Error en el pool de PostgreSQL:', err);
         });
     }
 
-    public static getInstance(): DatabaseConnection {
-        if (!DatabaseConnection.instance) {
-            DatabaseConnection.instance = new DatabaseConnection();
+    public static getInstance(): Database {
+        if (!Database.instance) {
+            Database.instance = new Database();
         }
-        return DatabaseConnection.instance;
+        return Database.instance;
     }
 
-    /**
-     * Ejecuta una consulta en la base de datos
-     * @param query - Consulta SQL
-     * @param params - Parámetros para la consulta
-     * @returns Promise con el resultado de la consulta
-     */
-    public async query(query: string, params?: any[]): Promise<any> {
-        const client = await this.pool.connect();
+    public getPool(): Pool {
+        return this.pool;
+    }
+
+    public async healthCheck(): Promise<boolean> {
         try {
-            return await client.query(query, params);
-        } finally {
+            const client = await this.pool.connect();
+            await client.query('SELECT 1');
             client.release();
-        }
-    }
-
-    /**
-     * Ejecuta una transacción en la base de datos
-     * @param callback - Función que ejecuta las operaciones de la transacción
-     */
-    public async transaction<T>(callback: (client: any) => Promise<T>): Promise<T> {
-        const client = await this.pool.connect();
-        try {
-            await client.query('BEGIN');
-            const result = await callback(client);
-            await client.query('COMMIT');
-            return result;
+            return true;
         } catch (error) {
-            await client.query('ROLLBACK');
-            throw error;
-        } finally {
-            client.release();
+            logger.error('Error en el health check de la base de datos:', error);
+            return false;
         }
     }
 }
 
-export default DatabaseConnection.getInstance();
+export const db = Database.getInstance();
