@@ -185,7 +185,7 @@ como propuesta de implementacion esta:
 Dentro de mis pasos como configuracion primero configure mi entoron o mi server para ello revisar `config` _directory_ en el que esta precisamente mi configuracion y comunicacion con la base de datos postgresql y con el redis precisamente para el manejo de memmoria almacenada en caché. [path](src/config).
 
 ### Config
-Esta configuración proporciona una base sólida para tu aplicación. Algunos puntos importantes a destacar:
+Algunos puntos importantes a destacar:
 
 **Patrón Singleton:** Tanto para la base de datos como para Redis, utilizamos el patrón Singleton para asegurar una única instancia de conexión en toda la aplicación.
 **Manejo de Errores**: Implementamos un sistema robusto de logging y manejo de errores para ambas conexiones.
@@ -257,7 +257,7 @@ Ambos **controladores**:
 
 ### Middlewares
 
-He implementado tres middleware fundamentales para la seguridad y validación de tu aplicación. Vamos a analizar cada uno:
+He implementado tres middleware fundamentales para la seguridad y validación. Vamos a analizar cada uno:
 
 - `AuthMiddleware` (auth.middleware.ts):
 
@@ -351,7 +351,7 @@ Cada modelo incluye:
 
 ### Rutas / routes
 
-He implementado un sistema completo de rutas con características importantes de seguridad y organización. Vamos a analizar los aspectos clave:
+He implementado un sistema completo de rutas con características importantes de seguridad y organización. 
 
 1. Rutas de Autenticación (`auth.routes.ts`):
 
@@ -452,7 +452,7 @@ Gestiona el sistema de citas:
    * Transiciones de estado controladas
    * Notificaciones y alertas
 
-esta implementacion es crucial comprender en que parte del ccodigo se implementa cada una de las estrategias plantteadas
+esta implementación es crucial comprender en que parte del ccodigo se implementa cada una de las estrategias plantteadas
  Para ello menccionaré lo relevante de cada fragmento de codigo a menra breve y se repite en algunos casos.
 
 - Manejo de errores:
@@ -529,7 +529,7 @@ Proporciona errores personalizados para diferentes situaciones:
 
 ### Types
 
-He creado una estructura completa de tipos TypeScript que cubre todas las necesidades de la aplicación. Vamos a analizar cada parte:
+Vamos a analizar cada parte:
 
 1. Enumeraciones (enums.ts):
 
@@ -583,7 +583,7 @@ He creado una estructura completa de tipos TypeScript que cubre todas las necesi
 
 ### DTOs
 
-He creado una estructura completa de DTOs para tu aplicación. Estos DTOs están diseñados para manejar todas las operaciones de creación y actualización de datos.
+Estos DTOs están diseñados para manejar todas las operaciones de creación y actualización de datos.
 
 1. DTOs de Autenticación (auth.dto.ts):
 
