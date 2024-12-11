@@ -13,7 +13,7 @@ The main objective is to ensure the integrity and confidentiality of medical inf
 
 ## Steps
 
-1. Design and implementation of the database
+1. [Design and implementation of the database](https://github.com/seia100/managx-Health/blob/main/_docs/database.md)
 2. [Desarrollo del backend](https://github.com/seia100/managx-Health/blob/main/backend/README.md)
 3. [Desarrollo del frontend](https://github.com/seia100/managx-Health/blob/main/_docs/frontend/FRONTEND_EXPLAIN.md)
 4. Integración y pruebas básicas
