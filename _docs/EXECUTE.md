@@ -87,7 +87,8 @@ createdb healthcare_db
 # Ejecutar migraciones
 npm run migrate
 ```
-[//]: # (# Ejecutar seeds)
+<!--
+(# Ejecutar seeds)
 
 [//]: # (npm run seed)
 
@@ -98,6 +99,7 @@ npm run migrate
 
 [//]: # ()
 [//]: # (\`\`\`bash)
+-->
 
 # Navegar al directorio del frontend
 cd ../frontend
@@ -245,12 +247,14 @@ npm run test:integration
 - Rate limiting
 - Validación de datos
 
-[//]: # ## 📈 Monitoreo
+<!--
+## 📈 Monitoreo
 
-[//]: #- Logs de sistema
-[//]: #- Métricas de rendimiento
-[//]: #- Alertas de errores
-[//]: #- Auditoría de acciones
+- Logs de sistema
+- Métricas de rendimiento
+- Alertas de errores
+- Auditoría de acciones
+-->
 
 ## 🤝 Contribución
 
