@@ -86,7 +86,7 @@ createdb healthcare_db
 
 # Ejecutar migraciones
 npm run migrate
-
+```
 [//]: # (# Ejecutar seeds)
 
 [//]: # (npm run seed)
@@ -107,7 +107,7 @@ npm install
 
 # Configurar variables de entorno
 cp .env.example .env
-```
+
 
 ## 🚀 Ejecución
 
