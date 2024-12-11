@@ -2,6 +2,10 @@
 
 Sistema integral de gestión médica que permite administrar pacientes, citas médicas, historiales clínicos y personal médico.
 
+> Aviso:
+> Esta implementación y ejecución es un estandar ya que en cada paso que he dado me ha salido diferentes errores tanto de dependencias como de código.
+> Tener en cuenta ello.
+
 ## 🏗️ Arquitectura
 
 ### Backend
