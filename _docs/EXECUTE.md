@@ -32,14 +32,14 @@ Sistema integral de gestión médica que permite administrar pacientes, citas m�
 
 ### 1. Clonar el Repositorio
 
-\`\`\`bash
-git clone https://your-repository/healthcare-platform.git
+```bash
+git clone https://github.com/seia100/managx-Health.git
 cd healthcare-platform
-\`\`\`
+```
 
 ### 2. Configurar Backend
 
-\`\`\`bash
+```bash
 # Navegar al directorio del backend
 cd backend
 
@@ -48,11 +48,11 @@ npm install
 
 # Configurar variables de entorno
 cp .env.example .env
-\`\`\`
+```
 
 Editar el archivo .env con tus configuraciones:
 
-\`\`\`env
+```env
 # Server
 NODE_ENV=development
 PORT=3000
@@ -72,11 +72,11 @@ JWT_EXPIRATION=24h
 REDIS_HOST=localhost
 REDIS_PORT=6379
 REDIS_PASSWORD=your_redis_password
-\`\`\`
+```
 
 ### 3. Configurar Base de Datos
 
-\`\`\`bash
+```bash
 # Crear base de datos
 createdb healthcare_db
 
@@ -103,29 +103,29 @@ npm install
 
 # Configurar variables de entorno
 cp .env.example .env
-\`\`\`
+```
 
 ## 🚀 Ejecución
 
 ### Desarrollo
 
-\`\`\`bash
+``` bash
 # Backend (desde directorio /backend)
-npm run dev
+npm run dev 
 
 # Frontend (desde directorio /frontend)
 npm run dev
-\`\`\`
 
 
 # Backend
+
 npm run build
 npm start
 
 # Frontend
 npm run build
 npm start
-\`\`\`
+```
 
 ## 📝 API Endpoints
 
