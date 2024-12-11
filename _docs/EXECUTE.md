@@ -38,7 +38,7 @@ Sistema integral de gestión médica que permite administrar pacientes, citas m�
 
 ```bash
 git clone https://github.com/seia100/managx-Health.git
-cd healthcare-platform
+cd managx-Health
 ```
 
 ### 2. Configurar Backend
@@ -182,7 +182,9 @@ npm start
 
 
 # Ejecutar tests de integración
-Tener en cuenta que los test y pruebas esa por mejorar y no estan funcionales :c
+
+> Tener en cuenta que los test y pruebas esa por mejorar y no estan funcionales :c
+
 ```shell
 npm run test:integration
 ##
@@ -243,12 +245,12 @@ npm run test:integration
 - Rate limiting
 - Validación de datos
 
-## 📈 Monitoreo
+[//]: # ## 📈 Monitoreo
 
-- Logs de sistema
-- Métricas de rendimiento
-- Alertas de errores
-- Auditoría de acciones
+[//]: #- Logs de sistema
+[//]: #- Métricas de rendimiento
+[//]: #- Alertas de errores
+[//]: #- Auditoría de acciones
 
 ## 🤝 Contribución
 
